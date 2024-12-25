@@ -1,11 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MenuItem, OrderItem } from "../types";
 
 export default function useOrder() {
+
+  const initialOrder = (): OrderItem[] => {
+    const localStorage = window.localStorage.getItem("order");
+    return localStorage ? JSON.parse(localStorage) : [];
+  }
   //Using a generic type to define my order
-  const [order, setOrder] = useState<OrderItem[]>([]);
+  const [order, setOrder] = useState<OrderItem[]>(initialOrder);
   const [tip, setTip] = useState(0);
   const [waiter, setWaiter] = useState("");
+
+  //Save the order in the local storage
+  useEffect(() => {
+    localStorage.setItem("order", JSON.stringify(order));
+  }, [order])
+  
 
   //Add items to the order
   const addItem = (item: MenuItem) => {
