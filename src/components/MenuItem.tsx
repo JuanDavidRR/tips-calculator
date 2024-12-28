@@ -1,14 +1,15 @@
+import { OrderActions } from "../reducers/order-reducer";
 import type { MenuItem } from "../types";
 
 type MenuItemProps = {
   item: MenuItem;
-  addItem: (item: MenuItem) => void;
+  dispatch: React.Dispatch<OrderActions>;
 };
 
-function MenuItem({ item, addItem }: MenuItemProps) {
+function MenuItem({ item, dispatch }: MenuItemProps) {
   return (
     <button
-      onClick={() => addItem(item)}
+      onClick={() => dispatch({ type: "ADD_ORDER", payload: { item } })}
       className="border-2 border-slate-950 hover:bg-slate-900 hover:text-white duration-200 p-4 w-full flex justify-between rounded-xl"
     >
       <h2>{item.name}</h2>

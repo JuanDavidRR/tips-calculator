@@ -1,3 +1,5 @@
+import { OrderActions } from "../reducers/order-reducer";
+
 const tipOptions = [
   {
     id: "tip-10",
@@ -37,13 +39,11 @@ const waiters = [
 
 type TipFormProps = {
   tip: number;
-  waiter: string
-  //To get the tip value we have to hover on useOrder over the setTip function
-  setTip: React.Dispatch<React.SetStateAction<number>>;
-  setWaiter: React.Dispatch<React.SetStateAction<string>>;
+  waiter: string;
+  dispatch: React.Dispatch<OrderActions>;
 };
 
-function TipForm({ setTip, tip, waiter, setWaiter }: TipFormProps) {
+function TipForm({ tip, waiter, dispatch }: TipFormProps) {
   return (
     <div className="mt-10">
       <h3 className="font-black text-2xl">Tip</h3>
@@ -57,7 +57,9 @@ function TipForm({ setTip, tip, waiter, setWaiter }: TipFormProps) {
               type="radio"
               name="tip"
               value={tipOption.value}
-              onChange={(e) => setTip(+e.target.value)}
+              onChange={(e) =>
+                dispatch({ type: "ADD_TIP", payload: +e.target.value })
+              }
               //We can reset the selected option if these values are equal
               checked={tipOption.value === tip}
             />
@@ -76,7 +78,9 @@ function TipForm({ setTip, tip, waiter, setWaiter }: TipFormProps) {
               type="radio"
               name="waiter"
               value={waiterOption.name}
-              onChange={(e) => setWaiter(e.target.value)}
+              onChange={(e) =>
+                dispatch({ type: "ADD_WAITER ", payload: e.target.value })
+              }
               checked={waiterOption.name === waiter}
             />
             <label htmlFor={waiterOption.id}>{waiterOption.name}</label>

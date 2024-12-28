@@ -1,23 +1,21 @@
-import { useState } from "react";
+import { useReducer, useState, useMemo, useEffect } from "react";
 import { menuItems } from "./data/db";
 import MenuItem from "./components/MenuItem";
-import useOrder from "./hooks/useOrder";
 import OrderContents from "./components/OrderContents";
 import OrderTotals from "./components/OrderTotals";
 import TipForm from "./components/TipForm";
+import { initialState, orderReducer } from "./reducers/order-reducer";
 
 function App() {
   const [item] = useState(menuItems);
-  const {
-    order,
-    addItem,
-    deleteItem,
-    tip,
-    setTip,
-    waiter,
-    setWaiter,
-    saveOrder,
-  } = useOrder();
+
+  const [state, dispatch] = useReducer(orderReducer, initialState);
+  const isOrderEmpty = useMemo(() => state.orders.length > 0, [state.orders]);
+
+  useEffect(() => {
+    localStorage.setItem("order", JSON.stringify(state.orders));
+  }, [state.orders]);
+
   return (
     <>
       <header className="bg-slate-950 p-10 text-center text-white">
@@ -36,25 +34,24 @@ function App() {
           </p>
           <article className="space-y-4">
             {item.map((item) => (
-              <MenuItem key={item.id} item={item} addItem={addItem} />
+              <MenuItem key={item.id} item={item} dispatch={dispatch} />
             ))}
           </article>
         </section>
         <section className="flex-1 border border-dashed border-slate-500 p-5 rounded-xl">
-          {order.length > 0 ? (
+          {isOrderEmpty ? (
             <>
-              <OrderContents order={order} deleteItem={deleteItem} />
+              <OrderContents order={state.orders} dispatch={dispatch} />
               <TipForm
-                setTip={setTip}
-                tip={tip}
-                waiter={waiter}
-                setWaiter={setWaiter}
+                dispatch={dispatch}
+                tip={state.tips}
+                waiter={state.waiter}
               />
               <OrderTotals
-                order={order}
-                tip={tip}
-                waiter={waiter}
-                saveOrder={saveOrder}
+                order={state.orders}
+                tip={state.tips}
+                waiter={state.waiter}
+                dispatch={dispatch}
               />
             </>
           ) : (

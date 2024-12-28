@@ -1,15 +1,16 @@
 import { useMemo } from "react";
 import { OrderItem } from "../types";
 import { formatCurrency } from "../helpers";
+import { OrderActions } from "../reducers/order-reducer";
 
 type OrderTotalProps = {
   order: OrderItem[];
   tip: number;
-  saveOrder: () => void;
+  dispatch: React.Dispatch<OrderActions>;
   waiter: string;
 };
 
-function OrderTotals({ order, tip, saveOrder, waiter}: OrderTotalProps) {
+function OrderTotals({ order, tip, dispatch, waiter }: OrderTotalProps) {
   //Getting the subtotal calculation
   const subtotalCalc = useMemo(
     () => order.reduce((total, item) => total + item.quantity * item.price, 0),
@@ -25,7 +26,7 @@ function OrderTotals({ order, tip, saveOrder, waiter}: OrderTotalProps) {
     [subtotalCalc, tipAmount]
   );
 
-  const isWaiterSelected = waiter ? waiter : 'Not selected';
+  const isWaiterSelected = waiter ? waiter : "Not selected";
 
   return (
     <>
@@ -39,7 +40,7 @@ function OrderTotals({ order, tip, saveOrder, waiter}: OrderTotalProps) {
           Tips: <span className="font-bold">{formatCurrency(tipAmount)}</span>
         </p>
         <p>
-          Waiter:  <span className="font-bold">{isWaiterSelected}</span>
+          Waiter: <span className="font-bold">{isWaiterSelected}</span>
         </p>
         <p>
           Total: <span className="font-bold">{formatCurrency(total)}</span>
@@ -48,7 +49,7 @@ function OrderTotals({ order, tip, saveOrder, waiter}: OrderTotalProps) {
       <button
         className="w-full p-3 uppercase bg-slate-950 text-white font-bold mt-10 disabled:opacity-30"
         disabled={total === 0}
-        onClick={() => saveOrder()}
+        onClick={() => dispatch({ type: "SAVE_ORDER" })}
       >
         Save order
       </button>
